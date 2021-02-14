@@ -1,19 +1,25 @@
-version: '2'
+version: "3.7"
 services:
   bot:
     build: .
-    container_name: 'ovisbot'
+    container_name: "ovisbot"
     restart: always
-    volumes:
-      - ./ovisbot:/ovisbot/ovisbot
+    environment:
+      OVISBOT_DISCORD_TOKEN: <discord_token>
+      OVISBOT_WOLFRAM_ALPHA_APP_ID:
+      OVISBOT_HTB_CREDS_EMAIL: htb@randomdomain.com
+      OVISBOT_HTB_CREDS_PASS: myhtbpassword
+      OVISBOT_HTB_TEAM_ID: 1000
+      OVISBOT_CTFTIME_TEAM_ID: 999
+      OVISBOT_ADMIN_ROLE: moderator
     working_dir: /ovisbot
-    command: pipenv run ovisbot run
     links:
       - mongo
+
   mongo:
     image: mongo
     ports:
-      - '27017:27017'
+      - "27017:27017"
     restart: always
     volumes:
       - db-data:/data/db

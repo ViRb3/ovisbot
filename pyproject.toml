@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "ovisbot"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+"discord.py" = "^1.6.0"
+pymongo = "^3.11.3"
+colorama = "^0.4.4"
+pymodm = "^0.4.3"
+python-dotenv = "^0.15.0"
+pytz = "^2021.1"
+requests = "^2.25.1"
+GitPython = "^3.1.13"
+texttable = "^1.6.3"
+feedparser = "^6.0.2"
+colorthief = "^0.2.1"
+beautifulsoup4 = "^4.9.3"
+parse = "^1.19.0"
+pycryptodome = "^3.10.1"
+PyNaCl = "^1.4.0"
+python-dateutil = "^2.8.1"
+click = "^7.1.2"
+
+[tool.poetry.dev-dependencies]
+black = "^20.8b1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

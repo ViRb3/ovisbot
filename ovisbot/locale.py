@@ -12,7 +12,10 @@ _ = None
 def setup_locale():
     global _
     os.environ["TZ"] = "Europe/Athens"
-    time.tzset()
+    try:
+        time.tzset()
+    except:
+        print("Unsupported platform for time.tzset(), skipping.")
     localedir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "locale")
     translate = gettext.translation(
         "ovisbot", localedir, languages=["cy"], fallback=True

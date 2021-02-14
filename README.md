@@ -2,7 +2,6 @@
   <img src="https://i.imgur.com/XOxm3Zb.png" alt="drawing" width="150"/>
 </p>
 
-
 <h1 align="center">
   OvisBot
 </h1>
@@ -41,7 +40,7 @@
 
 # Overview
 
-OvisBot is a modular, feature-extensive Discord bot for managing CTF teams through discord. It facilitates collaboration and organisation by providing well defined commands to create/delete/update discord category/channels in order to structure CTF problems and provide more efficient team commmunication. In addition the bot provides basic utility functions to assist the solving process of CTF challenges (encoding schemes, etc.. ). Finally, promotes competitiveness amongst team members by providing a aut-synchronised leaderboard to common cybersecurity training platforms such as <a href="https://cryptohack.org/">CryptoHack</a> and <a href="https://www.hackthebox.eu/">Hack The Box</a>, 
+OvisBot is a modular, feature-extensive Discord bot for managing CTF teams through discord. It facilitates collaboration and organisation by providing well defined commands to create/delete/update discord category/channels in order to structure CTF problems and provide more efficient team commmunication. In addition the bot provides basic utility functions to assist the solving process of CTF challenges (encoding schemes, etc.. ). Finally, promotes competitiveness amongst team members by providing a aut-synchronised leaderboard to common cybersecurity training platforms such as <a href="https://cryptohack.org/">CryptoHack</a> and <a href="https://www.hackthebox.eu/">Hack The Box</a>,
 
 Note that the majority of the features are provided by isolated plugins and thus they can be enabled/disabled on demand.
 
@@ -49,46 +48,10 @@ This is a self-hosted bot, therefore it requires to be hosted on a private serve
 
 # Installation
 
-There are couple ways to install the bot but generally the installing using docker-compose is the most convenient way to do it. Nevertheless, don't hesitate to use any other methods that suits you.
+Ensure your environmental variable are set correctly in `docker-compose.yml`, then run:
 
-## Installing using pip
-
-To install using pip run the following command
 ```
-pip install ovisbot
-```
-The above will install `ovisbot` in your python environment and will introduce the `ovisbot` cli. The cli provides commands to launch and interact with ovisbot.
-
-At runtime, the bot requires a running MongoDB server. An easy way to run a local mongodb server is using docker. You skip this step if you already have one running
-```
-docker run -d -p 27017-27019:27017-27019 --name mongodb mongo
-```
-
-Since OvisBot requires some predifined configuration before launch, it is necessary the you set your environment variables accordingly. Alternatively you can create a `.env` file that defined the required variables. Refer to [.env.example](.env.example) for an example.
-
-OvisBot cli provides the `setupenv` command which assists the creation of a .env file. Therefore to contrinue run and fill in the variables.
-```
-ovisbot setupenv
-```
-At the end of the process a new `.env` file will be create in your current directory. 
-
-Finally to launch the bot, run:
-```
-ovisbot run
-```
-
-## Installing using docker
-
-Installation using docker takes care of running mongo db automatically without requiring any extra steps. To achieve this, `docker-compose` is utilised therefore make sure that you have `docker` and `docker-compose` installed on your system.
-
-Firstly clone this repository:
-```
-git clone https://github.com/cybermouflons/ovisbot ovisbot && cd ovisbot
-```
-
-For the next step make sure that you have your environment variables configured properly and run:
-```
-docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+docker-compose up --build
 ```
 
 ## Versioning

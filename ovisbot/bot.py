@@ -14,7 +14,6 @@ from pymongo.errors import ServerSelectionTimeoutError
 from colorama import Fore
 
 from ovisbot import __version__
-from ovisbot import commands
 from ovisbot.cog_manager import CogManager
 from ovisbot.events import hook_events
 from ovisbot.error_handling import hook_error_handlers
@@ -76,6 +75,6 @@ class OvisBot(Bot, BaseCommandsMixin, RankCommandsMixin, ManageCommandsMixin):
             raise ValueError(i18n._("DISCORD_BOT_TOKEN variable has not been set!"))
         self.run(self.config.DISCORD_BOT_TOKEN)
 
-    def init_db(self) -> NoReturn:
+    def init_db(self) -> None:
         """Initializes db connection"""
         connect(self.config_cls.DB_URL)
