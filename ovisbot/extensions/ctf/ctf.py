@@ -9,8 +9,6 @@ import dateutil.parser
 import pytz
 import random
 
-import ovisbot.locale as i18n
-
 from datetime import timedelta
 from dateutil.utils import default_tzinfo
 from discord.ext import commands
@@ -43,7 +41,6 @@ from ovisbot.helpers import (
     td_format,
 )
 from discord.ext import tasks
-from ovisbot.locale import tz
 from discord.ext.commands.core import GroupMixin
 import pymodm
 
@@ -61,20 +58,16 @@ CHALLENGE_CATEGORIES = [
     "htb",
 ]
 
-CHALLENGE_DIFFICULTIES = [
-    "none",
-    "easy",
-    "medium",
-    "hard"
-]
+CHALLENGE_DIFFICULTIES = ["none", "easy", "medium", "hard"]
 
 # difficulty -> (:emoji:, text)
 DIFFICULTY_REWARDS = {
-    "none": (":candy:", "κουφεττούα"),
-    "easy": (":cookie:", "πισκοττούιν"),
-    "medium": (":lollipop:", ["μηλούιν", "πίππιλλο", "γλειφιτζούρι"]),
-    "hard": (":icecream:", "παωτόν"),
+    "none": (":candy:", "candy"),
+    "easy": (":cookie:", "cookie"),
+    "medium": (":lollipop:", "lollipop"),
+    "hard": (":icecream:", "icecream"),
 }
+
 
 class Ctf(commands.Cog):
     def __init__(self, bot):
@@ -94,7 +87,7 @@ class Ctf(commands.Cog):
         self.gid = ctx.guild.id
 
         if ctx.invoked_subcommand is None:
-            await ctx.send("Invalid command passed.  Use !help.")
+            await ctx.send("Invalid command passed. Use !help.")
 
     @ctf.command()
     async def status(self, ctx):
@@ -112,13 +105,13 @@ class Ctf(commands.Cog):
     async def status_error(self, ctx, error):
         if isinstance(error.original, CTF.DoesNotExist):
             await ctx.channel.send(
-                "Έφκαλεν η γλώσσα μου μαλλιά ρε! For this command you have to be in a channel created by !ctf create."
+                "Error: You have to be in a channel created by !ctf create."
             )
 
     @ctf.command()
     async def archive(self, ctx, ctf_name):
         """
-        Arcive a CTF to the DB and remove it from discord
+        Archive a CTF to the DB and remove it from discord
         """
         ctf_name = ctf_name.lower()
         ctf = CTF.objects.get({"name": ctf_name})
@@ -141,12 +134,10 @@ class Ctf(commands.Cog):
             await self.bot.help_command.command_callback(ctx, command=str(ctx.command))
 
         if isinstance(error.original, CTF.DoesNotExist):
-            await ctx.channel.send(
-                "Πε μου εσύ αν θορείς κανένα CTF με έτσι όνομα ... Οι πε μου"
-            )
+            await ctx.channel.send("No such CTF exists.")
         else:
             logger.error(error)
-            await ctx.channel.send("Ουπς. Κάτι επήε λάθος.")
+            await ctx.channel.send("Oops. Something went wrong.")
 
     @ctf.command()
     async def create(self, ctx, ctf_name):
@@ -175,7 +166,7 @@ class Ctf(commands.Cog):
         )
         CTF(name=category, created_at=datetime.datetime.now(), challenges=[]).save()
         await success(ctx.message)
-        await general_channel.send(f"@here Καλως ορίσατε στο {category} CTF")
+        await general_channel.send(f"@here Welcome to {category} CTF")
 
     @create.error
     async def create_error(self, ctx, error):
@@ -184,9 +175,7 @@ class Ctf(commands.Cog):
             await self.bot.help_command.command_callback(ctx, command=str(ctx.command))
 
         if isinstance(error.original, CTFAlreadyExistsException):
-            await ctx.channel.send(
-                "Ρε κουμπάρε! This CTF name already exists! Pick another one"
-            )
+            await ctx.channel.send("This CTF name already exists! Pick another one")
 
     @ctf.command(aliases=["addchall"])
     async def addchallenge(self, ctx, challname, category, difficulty="none"):
@@ -238,9 +227,9 @@ class Ctf(commands.Cog):
         ctf.challenges.append(new_challenge)
         ctf.save()
         await success(ctx.message)
-        await challenge_channel.send("@here Ατε να δούμε δώστου πίεση!")
+        await challenge_channel.send("@here Let's see, give it pressure!")
         notebook_msg = await challenge_channel.send(
-            f"Ετο τζαι το δευτερούι σου: {notebook_url}"
+            f"Here's a notebook: {notebook_url}"
         )
         await notebook_msg.pin()
 
@@ -300,12 +289,10 @@ class Ctf(commands.Cog):
 
         if isinstance(error.original, CTF.DoesNotExist):
             await ctx.channel.send(
-                "For this command you have to be in a channel created by !ctf create."
+                "Error: You have to be in a channel created by !ctf create."
             )
         elif isinstance(error.original, ChallengeDoesNotExistException):
-            await ctx.channel.send(
-                "Παρέα μου... εν κουτσιάς... Εν έσιει έτσι challenge!"
-            )
+            await ctx.channel.send("Error: challenge does not exist!")
 
     @ctf.command()
     async def notes(self, ctx):
@@ -324,7 +311,7 @@ class Ctf(commands.Cog):
         if challenge.notebook_url != "":
             await ctx.channel.send(f"Notes: {challenge.notebook_url}")
         else:
-            await ctx.channel.send("Εν έσσιει έτσι πράμα δαμέ...Τζίλα το...")
+            await ctx.channel.send("Error: No notebook found.")
 
     @notes.error
     async def notes_error(self, ctx, error):
@@ -332,7 +319,7 @@ class Ctf(commands.Cog):
             error.original, (NotInChallengeChannelException, CTF.DoesNotExist)
         ):
             await ctx.channel.send(
-                "Ρε πελλοβρεμένε! For this command you have to be in a ctf challenge channel created by `!ctf addchallenge`."
+                "Error: Ъou have to be in a ctf challenge channel created by `!ctf addchallenge`."
             )
 
     @ctf.command()
@@ -346,9 +333,7 @@ class Ctf(commands.Cog):
             raise CTFAlreadyFinishedException
         ctf.finished_at = datetime.datetime.now()
         ctf.save()
-        await ctx.channel.send(
-            "Ατε.. Μπράβο κοπέλια τζαι κοπέλλες! Να πνάσουμε τζαι εμείς νακκο!"
-        )
+        await ctx.channel.send("CTF marked as finished!")
 
     @finish.error
     async def finish_error(self, ctx, error):
@@ -357,16 +342,14 @@ class Ctf(commands.Cog):
             await self.bot.help_command.command_callback(ctx, command=str(ctx.command))
 
         if isinstance(error.original, CTF.DoesNotExist):
-            await ctx.channel.send(
-                "Εισαι τζαι εσού χαλασμένος όπως τα διαστημόπλοια του Κίτσιου... There is not such CTF name. Use `!status`"
-            )
+            await ctx.channel.send("Error: There is not such CTF name. Use `!status`")
         if isinstance(error.original, CTFAlreadyFinishedException):
             await ctx.channel.send("This CTF has already finished!")
 
     @ctf.command()
     async def solve(self, ctx):
         """
-        Marks the current challenge as solved by you. 
+        Marks the current challenge as solved by you.
         Addition of team mates that helped to solve is optional
         """
         chall_name = ctx.channel.name
@@ -406,7 +389,7 @@ class Ctf(commands.Cog):
             reward_text = random.choice(reward_text)
 
         await ctx.channel.send(
-            "Πελλαμός! {0}! Congrats for solving {1}. Έλα {2} {3}".format(
+            "Πελλαμός! {0}! Congrats for solving {1}. Here's {2} {3}".format(
                 solvers_str, chall_name, reward_text, reward_emoji
             )
         )
@@ -730,7 +713,7 @@ class Ctf(commands.Cog):
             raise CTFSharedCredentialsNotSet
         emb = discord.Embed(description=ctf.credentials(), colour=4387968)
         await ctx.channel.send(embed=emb)
-  
+
     @showcreds.error
     async def showcreds_error(self, ctx, error):
         if isinstance(error, CTF.DoesNotExist):
@@ -763,9 +746,8 @@ class Ctf(commands.Cog):
         elif ctx.invoked_subcommand is None:
             self.help_command.context = ctx
             await failed(ctx.message)
-            await ctx.send(
-                i18n._("**Invalid command passed**. See below for more help")
-            )
+            await ctx.send("**Invalid command passed**. See below for more help")
+
             await self.help_command.command_callback(ctx, command=str(ctx.command))
             # subcomms = [sub_command for sub_command in ctx.command.all_commands]
             # await ctx.send(

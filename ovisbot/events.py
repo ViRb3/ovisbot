@@ -1,7 +1,6 @@
 import logging
 import discord
 import sys
-import ovisbot.locale as i18n
 
 from discord.ext.commands.errors import (
     MissingPermissions,
@@ -27,7 +26,7 @@ def hook_events(bot):
     @bot.event
     async def on_message(message):
         if bot.user in message.mentions:
-            await message.channel.send(i18n._("What?!"))
+            await message.channel.send("What?!")
         await bot.process_commands(message)
 
     @bot.event
@@ -42,10 +41,8 @@ def hook_events(bot):
     @bot.event
     async def on_member_join(member):
         await member.send(
-            i18n._(
-                "Hello {0}! Welcome to the server! Send {1}help to see a list of available commands".format(
-                    member.name, bot.command_prefix
-                )
+            "Hello {0}! Welcome to the server! Send {1}help to see a list of available commands".format(
+                member.name, bot.command_prefix
             )
         )
         announcements = discord.utils.get(
@@ -53,11 +50,7 @@ def hook_events(bot):
         )
         if announcements is not None:
             await announcements.send(
-                (
-                    i18n._(
-                        "Welcome {0}! Take a moment to briefly introduce yourbot".format(
-                            member.name
-                        )
-                    )
+                "Welcome {0}! Take a moment to briefly introduce yourbot".format(
+                    member.name
                 )
             )

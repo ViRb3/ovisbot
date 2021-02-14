@@ -2,7 +2,6 @@ import discord
 import logging
 import re
 import requests
-import ovisbot.locale as i18n
 
 from datetime import datetime
 from discord.ext.commands import CommandError
@@ -57,7 +56,7 @@ class RankCommandsMixin:
                 '<i class="fas fa-user-chart"></i> (.*)</span><br>', r.text
             )
 
-            status_response = i18n._("Position: " + result.group(1))
+            status_response = "Position: " + result.group(1)
 
             embed = discord.Embed(
                 title="Hack The Box Team Ranking",
@@ -94,9 +93,8 @@ class RankCommandsMixin:
             }
             r = requests.get(url, headers=headers)
             data = r.json()
-            status_response = i18n._(
-                "Position: "
-                + str(data["rating"][0][str(datetime.now().year)]["rating_place"])
+            status_response = "Position: " + str(
+                data["rating"][0][str(datetime.now().year)]["rating_place"]
             )
 
             embed = discord.Embed(
@@ -121,5 +119,5 @@ class RankCommandsMixin:
         async def ranking_error(ctx, error):
             if isinstance(error, NotConfiguredException):
                 await ctx.channel.send(
-                    i18n._("Configuration missing: {0}".format(error.args[0]))
+                    "Configuration missing: {0}".format(error.args[0])
                 )

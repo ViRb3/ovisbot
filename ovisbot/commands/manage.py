@@ -3,7 +3,6 @@ import discord
 import logging
 import os
 import json
-import ovisbot.locale as i18n
 
 from discord.ext import commands
 from functools import partial
@@ -63,9 +62,7 @@ class ManageCommandsMixin:
             elif ctx.invoked_subcommand is None:
                 self.help_command.context = ctx
                 await failed(ctx.message)
-                await ctx.send(
-                    i18n._("**Invalid command passed**. See below for more help")
-                )
+                await ctx.send("**Invalid command passed**. See below for more help")
                 await self.help_command.command_callback(ctx, command=str(ctx.command))
 
         @config.command()
@@ -77,7 +74,7 @@ class ManageCommandsMixin:
                 self.config.save()
                 await success(ctx.message)
             else:
-                await ctx.send(i18n._("Property {0} does not exist".format(option)))
+                await ctx.send("Property {0} does not exist".format(option))
                 await failed(ctx.message)
 
         @manage.group()
@@ -90,9 +87,7 @@ class ManageCommandsMixin:
             elif ctx.invoked_subcommand is None:
                 self.help_command.context = ctx
                 await failed(ctx.message)
-                await ctx.send(
-                    i18n._("**Invalid command passed**. See below for more help")
-                )
+                await ctx.send("**Invalid command passed**. See below for more help")
                 await self.help_command.command_callback(ctx, command=str(ctx.command))
 
         @keys.command()
@@ -103,14 +98,12 @@ class ManageCommandsMixin:
             except SSHKey.DoesNotExist:
                 pass
             else:
-                await ctx.send(
-                    i18n._("This key name already exists. Choose another one.")
-                )
+                await ctx.send("This key name already exists. Choose another one.")
                 return
 
             if not isinstance(ctx.channel, discord.DMChannel):
                 await ctx.send(
-                    i18n._("This is a public channel. Continue the process through DM.")
+                    "This is a public channel. Continue the process through DM."
                 )
 
             # TODO: Create key manager to handle these sort of tasks
@@ -128,10 +121,8 @@ class ManageCommandsMixin:
                 priv_prefix = "private"
                 pub_prefix = "public"
                 await ctx.author.send(
-                    i18n._(
-                        "Please upload your private and public keys an attachment in a message that starts with `{0}` and `{1}` respectively.".format(
-                            priv_prefix, pub_prefix
-                        )
+                    "Please upload your private and public keys an attachment in a message that starts with `{0}` and `{1}` respectively.".format(
+                        priv_prefix, pub_prefix
                     )
                 )
 
@@ -145,11 +136,9 @@ class ManageCommandsMixin:
                             check=partial(is_key, add_key_msg, priv_prefix),
                         )
                     except asyncio.TimeoutError:
-                        await ctx.author.send(
-                            i18n._("Timed out... Try running `addkey` again")
-                        )
+                        await ctx.author.send("Timed out... Try running `addkey` again")
                     else:
-                        await ctx.author.send(i18n._("Saved private key successfully!"))
+                        await ctx.author.send("Saved private key successfully!")
                         url = message.attachments[0].url
                     return url
 
@@ -163,11 +152,9 @@ class ManageCommandsMixin:
                             check=partial(is_key, add_key_msg, pub_prefix),
                         )
                     except asyncio.TimeoutError:
-                        await ctx.author.send(
-                            i18n._("Timed out... Try running `addkey` again")
-                        )
+                        await ctx.author.send("Timed out... Try running `addkey` again")
                     else:
-                        await ctx.author.send(i18n._("Saved public key successfully!"))
+                        await ctx.author.send("Saved public key successfully!")
                         url = message.attachments[0].url
                     return url
 
@@ -191,7 +178,7 @@ class ManageCommandsMixin:
                 )
                 key.save()
 
-                message = await ctx.author.send(i18n._("Key added!"))
+                message = await ctx.author.send("Key added!")
                 await success(message)
 
             bot.loop.create_task(prompt_keys())
@@ -212,9 +199,7 @@ class ManageCommandsMixin:
             elif ctx.invoked_subcommand is None:
                 self.help_command.context = ctx
                 await failed(ctx.message)
-                await ctx.send(
-                    i18n._("**Invalid command passed**. See below for more help")
-                )
+                await ctx.send("**Invalid command passed**. See below for more help")
                 await self.help_command.command_callback(ctx, command=str(ctx.command))
 
         @extensions.command()
@@ -258,15 +243,15 @@ class ManageCommandsMixin:
         @enable.error
         async def install_error(ctx, err):
             if isinstance(err.original, CogAlreadyInstalledException):
-                await ctx.channel.send(i18n._("Extension already installed"))
+                await ctx.channel.send("Extension already installed")
             elif isinstance(err.original, SSHKey.DoesNotExist):
-                await ctx.channel.send(i18n._("This key does not exist."))
+                await ctx.channel.send("This key does not exist.")
             elif isinstance(err.original, CogSpecificationMissingException):
                 await ctx.channel.send(
-                    i18n._("Extension specification (extension.json) does not exist!")
+                    "Extension specification (extension.json) does not exist!"
                 )
             elif isinstance(err.original, discord.ext.commands.errors.ExtensionFailed):
-                await ctx.channel.send(i18n._("Error when loading:"))
+                await ctx.channel.send("Error when loading:")
                 logger.info(dir(err.original))
                 await ctx.channel.send("```" + err.original.args[0] + "```")
             await failed(ctx.message)
@@ -277,7 +262,7 @@ class ManageCommandsMixin:
             """Sends the given message to the channel with the specified channel id"""
             channel = discord.utils.get(ctx.guild.text_channels, id=int(channel_id))
             if channel is None:
-                await ctx.channel.send(i18n._("Could not find channel..."))
+                await ctx.channel.send("Could not find channel...")
             else:
                 await channel.send(msg)
                 await success(ctx.message)
